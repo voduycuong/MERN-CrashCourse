@@ -1,9 +1,10 @@
-import { useState, useRef } from "react";
-import { createPost } from "../api";
+import { useState, useRef } from "react"
+import { createPost } from "../api"
 import { Input } from "@/components/ui/Input"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/Label"
 import { Textarea } from "@/components/ui/textarea"
+import { useToast } from "@/components/hooks/use-toast"
 
 export function CreateBlog() {
     const [title, setTitle] = useState("")
@@ -13,12 +14,15 @@ export function CreateBlog() {
     const [uploadStatus, setUploadStatus] = useState("")
     const [message, setMessage] = useState("")
 
-    const MAX_FILE_SIZE = 15000000; // 15MB
-    const inputFile = useRef(null);
+    const { toast } = useToast()
+
+
+    const MAX_FILE_SIZE = 15000000 // 15MB
+    const inputFile = useRef(null)
 
     async function handleSubmit(e) {
-        e.preventDefault();
-        setUploadStatus("uploading");
+        e.preventDefault()
+        setUploadStatus("uploading")
 
         let submitObject = {
             title: title,
@@ -30,46 +34,54 @@ export function CreateBlog() {
         }
 
         try {
-            await createPost(submitObject);
-            setUploadStatus("done");
-            setMessage("Upload successful!");
+            await createPost(submitObject)
+            setUploadStatus("done")
+            toast({
+                title: "Upload successful!",
+                description: "Your post has been uploaded.",
+                type: "success",
+            })
 
             // Clear field
-            setTitle("");
-            setDescription("");
-            setContent("");
-            setFile(null);
-            inputFile.current.value = "";
-
-            setTimeout(() => {
-                setMessage(""); // Clear the message after 3 seconds
-            }, 3000);
+            setTitle("")
+            setDescription("")
+            setContent("")
+            setFile(null)
+            inputFile.current.value = ""
         } catch (error) {
-            setUploadStatus("error");
-            console.error("Error uploading file:", error);
-            setMessage("Error uploading file. Please try again.");
-
-            setTimeout(() => {
-                setMessage(""); // Clear the message after 3 seconds
-            }, 3000);
+            setUploadStatus("error")
+            console.error("Error uploading file:", error)
+            toast({
+                title: "Upload failed",
+                description: "There was an error uploading your file. Please try again.",
+                type: "error",
+            })
         }
     }
 
     function handleFileUpload(e) {
-        const file = e.target.files[0];
-        const fileExtension = file.name.substring(file.name.lastIndexOf("."));
+        const file = e.target.files[0]
+        const fileExtension = file.name.substring(file.name.lastIndexOf("."))
 
-        console.log(file);
-        console.log(fileExtension);
+        console.log(file)
+        console.log(fileExtension)
 
         if (fileExtension !== ".jpg" && fileExtension !== ".png" && fileExtension !== ".jpeg") {
-            alert("Files must be jpg or png");
-            inputFile.current.value = "";
-            inputFile.current.type = "file";
-            return;
+            toast({
+                title: "Invalid file type",
+                description: "Files must be jpg or png.",
+                type: "error",
+            })
+            inputFile.current.value = ""
+            inputFile.current.type = "file"
+            return
         }
         if (file.size > MAX_FILE_SIZE) {
-            alert("File size exceeds the limit (15MB)");
+            toast({
+                title: "File size error",
+                description: "File size exceeds the limit (15MB).",
+                type: "error",
+            })
             inputFile.current.value = "";
             inputFile.current.type = "file";
             return;
