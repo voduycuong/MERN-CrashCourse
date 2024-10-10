@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { searchPosts } from "../api";
 import { Input } from "@/components/ui/Input";
-import { Button } from "@/components/ui/button";
 
 import {
     NavigationMenu,
@@ -20,10 +19,7 @@ export function Navbar() {
     const [searchQuery, setSearchQuery] = useState("");
     const [searchResults, setSearchResults] = useState([]);
 
-    function handleLogout() {
-        sessionStorage.removeItem("User");
-        navigate("/");
-    }
+
 
     async function handleSearchChange(e) {
         const query = e.target.value;
@@ -62,39 +58,34 @@ export function Navbar() {
                     </NavigationMenuItem>
                 ))}
 
-                <form className="flex items-center max-w-[300px] w-full">
+                <form>
                     <Input
                         type="text"
                         placeholder="Search..."
                         value={searchQuery}
                         onChange={handleSearchChange}
-                        className="p-3 border rounded-md ml-2 mr-20"
+                        className="p-3 border rounded-md ml-10"
                     />
                 </form>
 
-                <NavigationMenuLink
-                    className={"ml-5 bg-red-300 " + navigationMenuTriggerStyle()}
-                    onClick={handleLogout}
-                >
-                    Log out
-                </NavigationMenuLink>
-
             </NavigationMenuList>
-            {searchResults.length > 0 && (
-                <div className="absolute top-20 bg-white shadow-md z-10 p-4 max-h-100 overflow-y-auto w-[300px]">
-                    <ul>
-                        {searchResults.map((post) => (
-                            <li
-                                key={post._id}
-                                onClick={() => handleResultClick(post._id)}
-                                className="cursor-pointer p-2 hover:bg-gray-200"
-                            >
-                                {post.title}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )}
-        </NavigationMenu>
+            {
+                searchResults.length > 0 && (
+                    <div className="absolute top-20 bg-white shadow-md z-10 p-4 max-h-100 overflow-y-auto w-[300px]">
+                        <ul>
+                            {searchResults.map((post) => (
+                                <li
+                                    key={post._id}
+                                    onClick={() => handleResultClick(post._id)}
+                                    className="cursor-pointer p-2 hover:bg-gray-200"
+                                >
+                                    {post.title}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                )
+            }
+        </NavigationMenu >
     );
 }

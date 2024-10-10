@@ -5,13 +5,13 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/Label"
 import { Textarea } from "@/components/ui/textarea"
 
-
 export function CreateBlog() {
-    const [title, setTitle] = useState("");
-    const [description, setDescription] = useState("");
-    const [content, setContent] = useState("");
-    const [file, setFile] = useState();
-    const [uploadStatus, setUploadStatus] = useState("");
+    const [title, setTitle] = useState("")
+    const [description, setDescription] = useState("")
+    const [content, setContent] = useState("")
+    const [file, setFile] = useState()
+    const [uploadStatus, setUploadStatus] = useState("")
+    const [message, setMessage] = useState("")
 
     const MAX_FILE_SIZE = 15000000; // 15MB
     const inputFile = useRef(null);
@@ -32,11 +32,26 @@ export function CreateBlog() {
         try {
             await createPost(submitObject);
             setUploadStatus("done");
-            alert("Upload successful!");
+            setMessage("Upload successful!");
+
+            // Clear field
+            setTitle("");
+            setDescription("");
+            setContent("");
+            setFile(null);
+            inputFile.current.value = "";
+
+            setTimeout(() => {
+                setMessage(""); // Clear the message after 3 seconds
+            }, 3000);
         } catch (error) {
             setUploadStatus("error");
             console.error("Error uploading file:", error);
-            alert("File upload failed. Please try again.");
+            setMessage("Error uploading file. Please try again.");
+
+            setTimeout(() => {
+                setMessage(""); // Clear the message after 3 seconds
+            }, 3000);
         }
     }
 
@@ -67,18 +82,17 @@ export function CreateBlog() {
     return (
         <form onSubmit={handleSubmit} className="w-1/2">
             <Label className="flex left-0 p-2">Blog Post Title: </Label>
-            <Input onChange={(e) => setTitle(e.target.value)} maxLength={100} required name="title" />
+            <Input value={title} onChange={(e) => setTitle(e.target.value)} maxLength={100} required name="title" />
             <Label className="flex left-0 p-2">Blog Post Description: </Label>
-            <Input onChange={(e) => setDescription(e.target.value)} maxLength={200} required name="description" />
+            <Input value={description} onChange={(e) => setDescription(e.target.value)} maxLength={200} required name="description" />
             <Label className="flex left-0 p-2">Blog Post Content: </Label>
-            <Textarea onChange={(e) => setContent(e.target.value)} maxLength={5000} required name="content" />
+            <Textarea value={content} onChange={(e) => setContent(e.target.value)} maxLength={5000} required name="content" />
             <Label className="flex left-0 p-2">Insert Header Image: </Label>
             <Input type="file" onChange={handleFileUpload} ref={inputFile} className="cursor-pointer hover:bg-accent" required />
 
-            {/* Display the upload status */}
+            {/* Display the upload status messages */}
             {uploadStatus === "uploading" && <p>Uploading...</p>}
-            {uploadStatus === "done" && <p>Upload successful!</p>}
-            {uploadStatus === "error" && <p>Error uploading file. Please try again.</p>}
+            {message && <p>{message}</p>} {/* Show message when it's set */}
 
             <Button type="submit" className="mt-4" disabled={uploadStatus === "uploading"}>Submit</Button>
         </form>
