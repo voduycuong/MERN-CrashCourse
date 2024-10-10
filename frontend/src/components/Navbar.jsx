@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
 import { pageData } from "./pageData";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { searchPosts } from "../api";
 import { Input } from "@/components/ui/Input";
+import { Button } from "@/components/ui/button"
+import { SunIcon, MoonIcon } from '@heroicons/react/24/solid'
 
 import {
     NavigationMenu,
@@ -18,8 +20,29 @@ export function Navbar() {
     const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState("");
     const [searchResults, setSearchResults] = useState([]);
+    const [isDarkMode, setIsDarkMode] = useState(false);
 
+    useEffect(() => {
+        const darkModePreference = localStorage.getItem('dark-mode');
+        if (darkModePreference === 'enabled') {
+            setIsDarkMode(true);
+            document.body.classList.add('dark');
+        }
+    }, []);
 
+    const toggleDarkMode = () => {
+        setIsDarkMode((prevMode) => {
+            const newMode = !prevMode;
+            if (newMode) {
+                localStorage.setItem('dark-mode', 'enabled');
+                document.body.classList.add('dark');
+            } else {
+                localStorage.removeItem('dark-mode');
+                document.body.classList.remove('dark');
+            }
+            return newMode;
+        });
+    };
 
     async function handleSearchChange(e) {
         const query = e.target.value;
@@ -46,7 +69,7 @@ export function Navbar() {
     }
 
     return (
-        <NavigationMenu className="bg-primary fixed w-screen top-0 left-0 h-20 p-2 flex items-center">
+        <NavigationMenu className="bg-primary fixed w-screen top-0 h-20 p-2 flex items-center">
             <NavigationMenuList className="flex items-center">
                 {pageData.map((page) => (
                     <NavigationMenuItem key={page.name}>
@@ -58,7 +81,7 @@ export function Navbar() {
                     </NavigationMenuItem>
                 ))}
 
-                <form>
+                <form className="ml-2 flex">
                     <Input
                         type="text"
                         placeholder="Search..."
@@ -67,6 +90,13 @@ export function Navbar() {
                         className="p-3 border rounded-md ml-10"
                     />
                 </form>
+
+                <Button
+                    onClick={toggleDarkMode}
+                    className="px-3 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary-foreground hover:text-secondary"
+                >
+                    {isDarkMode ? (<MoonIcon className="w-5 h-5" />) : (<SunIcon className="w-5 h-5" />)}
+                </Button>
 
             </NavigationMenuList>
             {

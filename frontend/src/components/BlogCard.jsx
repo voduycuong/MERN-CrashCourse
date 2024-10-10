@@ -9,11 +9,15 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/hooks/use-toast"
 
 export function BlogCard({ post, isProfilePage, onDelete }) {
 
     let date = new Date(post.dateCreated)
     let stringDate = date.toString()
+
+    const { toast } = useToast()
+
 
     const handleDelete = async () => {
         const confirmDelete = window.confirm("Are you sure you want to delete this post?");
@@ -25,8 +29,10 @@ export function BlogCard({ post, isProfilePage, onDelete }) {
             await deletePost(post._id);
             onDelete(post._id);
             console.log("Post deleted");
+            toast({ title: "Post deleted", description: "Your post has been deleted successfully.", type: "success" })
         } catch (error) {
             console.error("Error deleting post:", error);
+            toast({ title: "Failed", description: "Failed to delete post.", type: "error" })
         }
     };
 

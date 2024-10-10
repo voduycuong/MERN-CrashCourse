@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom"
 import axios from "axios"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { useToast } from "@/components/hooks/use-toast"
 
 export function Login() {
     const [user, setUser] = useState({
@@ -11,6 +12,7 @@ export function Login() {
         password: ""
     })
 
+    const { toast } = useToast()
     const navigate = useNavigate()
 
     function handleChange(e) {
@@ -23,9 +25,10 @@ export function Login() {
         if (res) {
             sessionStorage.setItem("User", res)
             axios.defaults.headers.common["Authorization"] = `Bearer ${res}`
+            toast({ title: "Login Successful", description: "Welcome back!", type: "success" })
             navigate("/home")
         } else {
-            alert("Login Failed")
+            toast({ title: "Login Failed", description: "Invalid credentials.", type: "error" })
         }
     }
 
