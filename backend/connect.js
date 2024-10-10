@@ -4,7 +4,6 @@ require('dotenv').config({ path: './config.env' });
 
 const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.dan3x.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
     serverApi: {
         version: ServerApiVersion.v1,
@@ -13,16 +12,27 @@ const client = new MongoClient(uri, {
     }
 });
 
-let database
+let database;
 
 module.exports = {
-    connectToServer: () => {
-        database = client.db(process.env.PROJECT_NAME)
+    connectToServer: async () => {
+        try {
+            await client.connect();
+            database = client.db(process.env.PROJECT_NAME);
+            console.log("Successfully connected to MongoDB!");
+        } catch (error) {
+            console.error("Error connecting to MongoDB:", error.message);
+            process.exit(1);
+        }
     },
     getDb: () => {
-        return database
-    }
-}
+        if (!database) {
+            throw new Error("Database not initialized. Call connectToServer first.");
+        }
+        return database;
+    },
+    getClient: () => client
+};
 
 /* async function run() {
     try {
