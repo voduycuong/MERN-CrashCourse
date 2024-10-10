@@ -41,7 +41,7 @@ postRoutes.route("/posts").post(verifyToken, async (req, res) => {
         description: req.body.description,
         content: req.body.content,
         author: req.body.user._id,
-        dateCreated: req.body.dateCreated,
+        dateCreated: new Date(req.body.dateCreated),
         imageId: req.body.imageId
     }
 
@@ -59,7 +59,7 @@ postRoutes.route("/posts/:id").put(verifyToken, async (req, res) => {
             description: req.body.description,
             content: req.body.content,
             author: req.body.author,
-            dateCreated: req.body.dateCreated,
+            dateCreated: new Date(req.body.dateCreated),
             imageId: req.body.imageId
         }
     }
