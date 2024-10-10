@@ -2,38 +2,50 @@ import { getPost } from "../api";
 import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button"
-
+import { Progress } from "@/components/ui/progress"
 
 export function ReadBlog() {
-    const [post, setPost] = useState(null); // Initialize as null for loading state
-    const [loading, setLoading] = useState(true); // Loading state
+    const [post, setPost] = useState(null)
+    const [loading, setLoading] = useState(true)
+    const [progress, setProgress] = useState(0)
 
-    let params = useParams();
-    const navigate = useNavigate();
-    let id = params.id;
+    let params = useParams()
+    const navigate = useNavigate()
+    let id = params.id
 
     useEffect(() => {
         async function loadPost() {
+            setLoading(true);
+            setProgress(0);
+
             try {
-                let data = await getPost(id);
-                let date = new Date(data.dateCreated);
-                data.dateCreated = date.toString();
-                setPost(data);
+                setProgress(30)
+                let data = await getPost(id)
+
+                setProgress(70)
+                let date = new Date(data.dateCreated)
+                data.dateCreated = date.toString()
+                setPost(data)
             } catch (error) {
-                console.error("Error fetching post:", error);
+                console.error("Error fetching post:", error)
             } finally {
-                setLoading(false); // Set loading to false after fetching
+                setLoading(false)
             }
         }
-        loadPost();
-    }, [id]); // Add id as a dependency to refetch if it changes
+        loadPost()
+    }, [id])
 
     if (loading) {
-        return <p>Loading...</p>; // Show loading indicator
+        return (
+            <div className="flex flex-col items-center">
+                <p>Loading...</p>
+                <Progress value={progress} />
+            </div>
+        );
     }
 
     if (!post) {
-        return <p>Post not found.</p>; // Handle case when post is not found
+        return <p>Post not found.</p>;
     }
 
     return (

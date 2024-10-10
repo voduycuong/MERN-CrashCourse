@@ -62,7 +62,7 @@ awsRoutes.route("/images").post(verifyToken, async (req, res) => {
 
 function verifyToken(req, res, next) {
     const authHeaders = req.headers["authorization"]
-    console.log("Authorization Header:", authHeaders); // Log the authorization header for debugging
+    // console.log("Authorization Header:", authHeaders);
     const token = authHeaders && authHeaders.split(' ')[1]
     if (!token) {
         return res.status(401).json({ message: "Authorization token is missing" })

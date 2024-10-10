@@ -7,7 +7,6 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
-import { Car } from "lucide-react"
 
 export function BlogCard({ post }) {
 

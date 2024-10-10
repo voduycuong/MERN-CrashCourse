@@ -89,3 +89,14 @@ export async function getImage(id) {
     const res = await axios.get(`${URL}/images/${id}`)
     return res
 }
+
+export async function searchPosts(title) {
+    try {
+        const res = await axios.get(`${URL}/search?searchQuery=${title}`);
+        return res.data
+
+    } catch (error) {
+        console.error("Error searching posts by title:", error);
+        throw error;
+    }
+}
